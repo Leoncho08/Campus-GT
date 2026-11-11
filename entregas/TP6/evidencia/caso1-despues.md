@@ -1,0 +1,14 @@
+**[Crítico — A confirmar] queryTicketRows.ts:28 — Se devuelven todas las columnas y todas las filas de Tickets a cualquiera que llame a GET /tickets**
+Escenario: `SELECT * FROM Tickets` no filtra por usuario ni elige columnas. Si un usuario sin privilegios (o alguien sin autenticar) llama a GET /tickets, recibe los tickets de todos y cualquier columna que tenga la tabla, incluidas las que se agreguen más adelante (emails, notas internas, etc.). Además, `-E` hace que la consulta corra con la identidad Windows del proceso del backend, no con los permisos de quien hace el pedido. No hay ningún llamador de esta función en el repo. Para confirmarlo hay que mirar el handler de la ruta GET /tickets (si exige autenticación y si filtra el resultado) y el esquema de la tabla Tickets.
+
+**[Alto] queryTicketRows.ts:20-31 — Se lanza un proceso sqlcmd por request y no tiene timeout**
+Escenario: si SQL Server queda bloqueado o lento (por ejemplo, un lock sobre Tickets), `sqlcmd` sin `-t` espera sin límite y `execFile` no tiene `timeout`. Cada GET /tickets nuevo abre otro proceso que también queda colgado. Con tráfico sostenido se acumulan procesos y conexiones hasta que el host o el backend dejan de responder a todos.
+
+**[Alto] queryTicketRows.ts:28,38 — La salida de FOR JSON se corta en filas y JSON.parse falla cuando la tabla crece**
+Escenario: SQL Server devuelve el resultado de `FOR JSON` partido en filas de unos 2033 caracteres, y sqlcmd imprime cada fila en una línea aparte. Con pocos tickets el JSON entra en una sola fila y todo funciona. Cuando el resultado pasa ese tamaño, se mete un salto de línea en cualquier posición, a menudo en medio de un string. `JSON.parse` tira `SyntaxError` y GET /tickets falla para todos los usuarios desde ese momento. `-y 8000` no evita este corte.
+
+**[Alto] queryTicketRows.ts:10,28 — La consulta no tiene paginación y el buffer tiene un tope fijo de 10 MB**
+Escenario: la consulta trae la tabla entera en cada request. Cuando el JSON de todos los tickets pasa los 10 MB, `execFile` corta el proceso con `ERR_CHILD_PROCESS_STDIO_MAXBUFFER` y el endpoint falla para todos. Antes de llegar a ese tope, cada request ya carga hasta 10 MB en memoria más el objeto parseado, así que unos pocos pedidos simultáneos alcanzan para que el consumo de memoria del backend crezca linealmente.
+
+**[Medio] queryTicketRows.ts:14,24 — DB_DATABASE no se valida**
+Escenario: si `DB_DATABASE` falta en el `.env`, se pasa `-d ""` y sqlcmd se conecta a la base por defecto del login. Ahí la consulta falla con "Invalid object name 'Tickets'" o, si esa base también tiene una tabla `Tickets`, devuelve datos de otra base. Sin `-b`, sqlcmd sale con código 0 ante errores SQL y escribe el error en stdout, así que el fallo aparece como un `SyntaxError` de `JSON.parse` y no como un error de base de datos.
