@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tests – Mi Backlog</title>
+  <style>
+    body { font-family: "Segoe UI", system-ui, sans-serif; margin: 24px 16px; color: #1d2128; background: #fff; }
+    h1 { font-size: 1.3rem; }
+    #resumen { font-weight: 700; font-size: 1.1rem; }
+    .ok { color: #15803d; }
+    .falla { color: #c62828; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 3px 0; }
+    pre { margin: 4px 0 0 20px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Tests unitarios – filtros.js</h1>
+  <p id="resumen"></p>
+  <ul id="resultados"></ul>
+
+  <script src="../js/filtros.js"></script>
+  <script src="runner.js"></script>
+  <script src="filtros.test.js"></script>
+</body>
+</html>

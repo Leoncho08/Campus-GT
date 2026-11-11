@@ -133,42 +133,9 @@
     const lista = $('lista');
     lista.replaceChildren();
 
-    let resultado = titulos.slice();
+    const visibles = app.filtros.filtrarYOrdenar(titulos, filtros);
 
-    if (filtros.texto) {
-      const busqueda = filtros.texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      resultado = resultado.filter((t) =>
-        t.titulo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(busqueda)
-      );
-    }
-    if (filtros.tipo) {
-      resultado = resultado.filter((t) => t.tipo === filtros.tipo);
-    }
-    if (filtros.estado) {
-      resultado = resultado.filter((t) => t.estado === filtros.estado);
-    }
-    if (filtros.plataforma) {
-      const plataforma = filtros.plataforma.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      resultado = resultado.filter((t) =>
-        (t.plataforma || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(plataforma)
-      );
-    }
-    if (filtros.genero) {
-      resultado = resultado.filter((t) => t.genero === filtros.genero);
-    }
-    if (filtros.soloFavoritos) {
-      resultado = resultado.filter((t) => t.favorito);
-    }
-
-    if (filtros.orden === 'nombre') {
-      resultado.sort((a, b) => a.titulo.localeCompare(b.titulo, 'es', { sensitivity: 'base' }));
-    } else if (filtros.orden === 'puntaje') {
-      resultado.sort((a, b) => (b.puntaje || 0) - (a.puntaje || 0));
-    } else {
-      resultado.sort((a, b) => b.fechaCreacion.localeCompare(a.fechaCreacion));
-    }
-
-    if (resultado.length === 0) {
+    if (visibles.length === 0) {
       const vacio = document.createElement('li');
       vacio.className = 'vacio';
       vacio.textContent = titulos.length === 0
@@ -178,7 +145,7 @@
       return;
     }
 
-    resultado.forEach((titulo) => lista.append(crearTarjeta(titulo)));
+    visibles.forEach((titulo) => lista.append(crearTarjeta(titulo)));
   }
 
   // ---------- Estadísticas y avisos ----------
