@@ -1,0 +1,13 @@
+# .NET
+bin/
+obj/
+
+# Datos locales de la API
+mi-backlog-api/Data/
+
+# Archivos comprimidos
+*.zip
+
+# Configuración local del editor
+.claude/
+.vscode/
