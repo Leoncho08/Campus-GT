@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi Backlog</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="encabezado">
+    <h1>Mi Backlog</h1>
+    <p class="subtitulo">Tu biblioteca de juegos, series y películas</p>
+    <ul id="estadisticas" class="estadisticas" aria-label="Cantidad de títulos por estado"></ul>
+  </header>
+
+  <div id="aviso" class="aviso" role="status" aria-live="polite" hidden></div>
+
+  <main class="contenedor">
+    <section class="panel" aria-labelledby="titulo-formulario">
+      <h2 id="titulo-formulario">Agregar título</h2>
+      <form id="formulario" novalidate>
+        <div class="campo">
+          <label for="f-titulo">Nombre *</label>
+          <input id="f-titulo" name="titulo" type="text" maxlength="100" autocomplete="off">
+          <p class="error" id="error-titulo"></p>
+        </div>
+
+        <div class="fila">
+          <div class="campo">
+            <label for="f-tipo">Tipo *</label>
+            <select id="f-tipo" name="tipo"></select>
+            <p class="error" id="error-tipo"></p>
+          </div>
+          <div class="campo">
+            <label for="f-estado">Estado *</label>
+            <select id="f-estado" name="estado"></select>
+            <p class="error" id="error-estado"></p>
+          </div>
+        </div>
+
+        <div class="fila">
+          <div class="campo">
+            <label for="f-plataforma">Plataforma</label>
+            <input id="f-plataforma" name="plataforma" type="text" placeholder="Steam, Netflix, PS5…" autocomplete="off">
+            <p class="error" id="error-plataforma"></p>
+          </div>
+          <div class="campo">
+            <label for="f-genero">Género</label>
+            <select id="f-genero" name="genero"></select>
+            <p class="error" id="error-genero"></p>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="f-puntaje">Puntaje (1 a 10)</label>
+          <input id="f-puntaje" name="puntaje" type="number" min="1" max="10" step="1">
+          <p class="error" id="error-puntaje"></p>
+        </div>
+
+        <div class="campo">
+          <label for="f-comentario">Comentario</label>
+          <textarea id="f-comentario" name="comentario" rows="3" maxlength="500"></textarea>
+          <p class="error" id="error-comentario"></p>
+        </div>
+
+        <div class="acciones">
+          <button type="submit" id="btn-guardar" class="boton primario">Agregar</button>
+          <button type="button" id="btn-cancelar" class="boton" hidden>Cancelar edición</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="titulo-biblioteca">
+      <div class="barra-titulo">
+        <h2 id="titulo-biblioteca">Biblioteca</h2>
+        <div class="acciones">
+          <button type="button" id="btn-exportar" class="boton">Exportar JSON</button>
+          <label class="boton" for="input-importar">Importar JSON</label>
+          <input type="file" id="input-importar" accept=".json,application/json" hidden>
+        </div>
+      </div>
+
+      <div class="filtros">
+        <div class="campo campo-busqueda">
+          <label for="buscar">Buscar</label>
+          <input id="buscar" type="search" placeholder="Nombre del título…" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="filtro-tipo">Tipo</label>
+          <select id="filtro-tipo"></select>
+        </div>
+        <div class="campo">
+          <label for="filtro-estado">Estado</label>
+          <select id="filtro-estado"></select>
+        </div>
+        <div class="campo">
+          <label for="filtro-plataforma">Plataforma</label>
+          <input id="filtro-plataforma" type="text" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="filtro-genero">Género</label>
+          <select id="filtro-genero"></select>
+        </div>
+        <div class="campo">
+          <label for="orden">Ordenar por</label>
+          <select id="orden">
+            <option value="fecha">Más recientes</option>
+            <option value="nombre">Nombre (A-Z)</option>
+            <option value="puntaje">Puntaje (mayor a menor)</option>
+          </select>
+        </div>
+        <label class="check">
+          <input id="filtro-favoritos" type="checkbox"> Solo favoritos
+        </label>
+      </div>
+
+      <ul id="lista" class="lista"></ul>
+    </section>
+  </main>
+
+  <script src="js/validation.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
